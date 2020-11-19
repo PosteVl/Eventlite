@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>All events</title>
+
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.css" rel="stylesheet" />
+</head>
+<body>
+
+
+  <div layout:fragment="content">
+    <h1>All events</h1>
+
+    <div class="button-row">
+     <form th:action="@{/events/search}" method="get">
+        <button class="btn btn-primary" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Search Events</button>
+        <a sec:authorize="isAuthenticated()" class="btn btn-primary" role="button" href="/events/new"><i class="fas fa-plus" aria-hidden="true"></i> Add a new event</a>
+
+     </form>
+   </div>
+
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th><i class="fas fa-bolt"></i> Event</th>
+          <th><i class="fas fa-map-marker-alt"></i> Venue</th>
+          <th><i class="fas fa-users"></i> Capacity</th>
+          <th><i class="fas fa-calendar"></i> Date</th>
+          <th><i class="fas fa-clock"></i> Time</th>
+          <th><i class="fas fa-bolt"></i> Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="e : ${events}">
+          <td>
+            <a th:href="@{/events/{num}(num=${e.id})}" th:text="${e.name}">My Event</a>
+          </td>
+          <td>
+            <a th:href="@{/venues/{num}(num=${(e.venue).id})}" th:text="${(e.venue).name}">Event venue</a>
+          </td>
+          <td th:text="${(e.venue).capacity}">Event capacity</td>
+          <td th:text="${{e.date}}">Event date</td>
+          <td th:text="${{e.time}}">Event time</td>
+          <td th:text="${{e.description}}">Event Description</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th><i class="fab fa-twitter"></i> Tweets</th>
+          <th><i></i></th>
+          <th><i></i></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="t : ${tweets}">
+          <td th:text="${t.key.createdAt}">Date</td>
+          <td><a th:href="${t.value}" th:text="${t.key.text}"></a></td>
+        <td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div id="map" style="width:100%; height:500px; margin-bottom: 40px;"></div>
+    <script src="https://unpkg.com/es6-promise@4.2.4/dist/es6-promise.auto.min.js"></script>
+    <script src="https://unpkg.com/@mapbox/mapbox-sdk/umd/mapbox-sdk.min.js"></script>
+    <script th:inline="javascript">
+    	mapboxgl.accessToken = 'pk.eyJ1IjoiaDA5IiwiYSI6ImNrOHZnYW1iaDBocnkzb213MmJ1cG1jcHMifQ.v_lOAmtB-5cdk4dY_ETVpg';
+
+        var events = /*[[${events}]]*/;
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [-2.240020314835789, 53.475353761665986], // starting position [lng, lat]
+            zoom: 10
+        });
+
+        var marks = [];
+        var bounds = new mapboxgl.LngLatBounds();
+
+        events.forEach(function placeMarkers(e, index) {
+        	var popup = new mapboxgl.Popup({ offset:35 }).setText(e.name);
+            marks.push(new mapboxgl.Marker().setLngLat([e.venue.longitude, e.venue.latitude]).setPopup(popup).addTo(map));
+            bounds.extend([e.venue.longitude, e.venue.latitude]);
+        })
+        map.addControl(new mapboxgl.NavigationControl());
+        map.fitBounds(bounds, { padding: 100 });
+
+    </script>
+
+
+
+  </div>
+
+</body>
+</html>

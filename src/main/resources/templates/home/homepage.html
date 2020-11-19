@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <style>
+    h1.ex1 {font-size: 100px;}
+    div.e3 {
+      margin-left: 1rem;
+      margin-right: 1rem;
+      margin-bottom:1rem}
+  </style>
+  <title>Homepage</title>
+</head>
+
+<body>
+  <div layout:fragment="content">
+
+  <div>
+    <h1 class="ex1 text-center">EventLite</h1>
+    <div class="btn-group btn-block">
+    <a class="btn btn-secondary" role="button" href="/events/">See All Events</a>
+    <a class="btn btn-secondary" role="button" href="/venues/">See All Venues</a>
+  </div>
+</div>
+<br>
+
+
+  <div class="card mx-auto" style="background-color:#ebf5ff;">
+    <h1 class="text-center">Upcoming Events</h1>
+    <div class="row h-100 e3">
+      <div class="card mx-auto" th:each="e : ${events}" style="width: 22rem;">
+        <div class="card-body">
+          <h4 class="card-title" th:text="${e.name}"></h4>
+          <h5 class="card-subtitle mb-2 text-muted" th:text="${e.description}"></h5>
+          <table class="text-muted">
+            <tr>
+              <th><i class="fas fa-calendar"></i></th>
+              <td th:text="${e.date}"></td>
+            </tr>
+            <tr th:if= "${e.time != null}">
+              <th><i class="fas fa-clock"></i></th>
+              <td th:text="${e.time}"></td>
+            </tr>
+          </table>
+          <a th:href="@{/events/{num}(num=${e.id})}" class="card-link"><i class="fa fa-plus" aria-hidden="true"></i></a>
+        </div>
+      </div>
+      <br>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="card mx-auto" style="background-color:#ebf5ff;">
+    <h1 class="text-center">Top Venues</h1>
+    <div class="row h-100 e3">
+      <div class="card mx-auto" th:each="v : ${venues}" style=" width: 22rem">
+        <div class="card-body">
+          <h4 class="card-title" th:text="${v.name}"></h4>
+          <h5 class="card-subtitle mb-2 text-muted">
+          <table>
+            <tr th:if= "${v.address != null}">
+              <th><i class="fas fa-map-marker-alt"></i></th>
+              <td th:text="${v.address}"></td>
+            </tr>
+            <tr th:if= "${v.postcode != null}">
+              <th><i class="fa fa-paper-plane"></i></th>
+              <td th:text="${v.postcode}"></td>
+            </tr>
+          </table>
+        </h5>
+          <a th:href="@{/venues/{num}(num=${v.id})}" class="card-link"><i class="fa fa-plus" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+    </div>
+    </div>
+  </body>
+  </html>

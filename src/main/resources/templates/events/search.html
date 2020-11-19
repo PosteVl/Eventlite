@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title>Search Events</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 align="center">Search for Events</h1>
+
+    <form th:action="@{/events/search}" method="get">
+        <div class="form-group">
+            <input class="form-control" type="text" name="query" id="query" th:placeholder="${searched}"  autofocus="autofocus"/>
+            <a><button class="btn btn-primary" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Search</button></a>
+        </div>
+        
+    </form>
+
+    <hr>
+    <h3 align="center" th:if="${upcomingEvents.size()>0}">Events coming up</h3>
+    <h3 align="center" th:if="${upcomingEvents.size()<=0}">No events taking place soon</h3>
+
+    <table class="table table-striped table-hover" th:if="${upcomingEvents.size()>0}">
+        <thead>
+        <tr>
+            <th><i class="fa fa-bolt"></i> Event</th>
+            <th><i class="fa fa-map-marker"></i> Venue</th>
+            <th><i class="fa fa-calendar"></i> Date</th>
+            <th><i class="fa fa-clock-o"></i> Time</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr th:each="e : ${upcomingEvents}">
+            <td>
+                <a th:href="@{/events/{num}(num=${e.id})}" th:text="${e.name}">My Event</a>
+            </td>
+            <td>
+                <a th:href="@{/venues/{num}(num=${e.venue.id})}" th:text="${e.venue.name}">Event venue</a>
+            </td>
+            <td th:text="${{e.date}}">Event date</td>
+            <td th:text="${{e.time}}">Event time</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <hr>
+    <h3 align="center" th:if="${pastEvents.size()>0}">Events which took place</h3>
+    <h3 align="center" th:if="${pastEvents.size()<=0}">No event has taken place before</h3>
+
+    <table class="table table-striped table-hover" th:if="${pastEvents.size()>0}">
+        <thead>
+        <tr>
+            <th><i class="fa fa-bolt"></i> Event</th>
+            <th><i class="fa fa-map-marker"></i> Venue</th>
+            <th><i class="fa fa-calendar"></i> Date</th>
+            <th><i class="fa fa-clock-o"></i> Time</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr th:each="e : ${pastEvents}">
+            <td>
+                <a th:href="@{/events/{num}(num=${e.id})}" th:text="${e.name}">My Event</a>
+            </td>
+            <td>
+                <a th:href="@{/venues/{num}(num=${e.venue.id})}" th:text="${e.venue.name}">Event venue</a>
+            </td>
+            <td th:text="${{e.date}}">Event date</td>
+            <td th:text="${{e.time}}">Event time</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>

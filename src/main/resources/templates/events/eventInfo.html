@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/default}">
+<head>
+  <title>Event Information</title>
+  <script src="https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.css" rel="stylesheet" />
+</head>
+<body>
+  <div layout:fragment="content">
+
+    <blockquote>
+      <h1><p th:text="${name}">Name</p></h1>
+
+      <h2>Event Date and Time</h2>
+      <p th:text="${date} + ' ' + ${time}">Date+Time</p>
+
+      <h2>Event Venue</h2>
+      <p>
+        <a th:href="@{/venues/{num}(num=${venue.id})}" th:text="${venue.name}">Venue </a>
+      </p>
+
+      <h2>Event Description</h2>
+      <p th:text="${description}">Description</p>
+    </blockquote>
+
+    <div id="map" style="width:100%; height:500px; margin-bottom: 40px;"></div>
+    <script src="https://unpkg.com/es6-promise@4.2.4/dist/es6-promise.auto.min.js"></script>
+    <script src="https://unpkg.com/@mapbox/mapbox-sdk/umd/mapbox-sdk.min.js"></script>
+    <script th:inline="javascript">
+    	mapboxgl.accessToken = 'pk.eyJ1IjoiaDA5IiwiYSI6ImNrOHZnYW1iaDBocnkzb213MmJ1cG1jcHMifQ.v_lOAmtB-5cdk4dY_ETVpg';
+        var mapboxClient = mapboxSdk({ accessToken: mapboxgl.accessToken });
+
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [-2.240020314835789, 53.475353761665986], // starting position [lng, lat]
+            zoom: 10
+        });
+
+      var longitude = /*[[${venue.longitude}]]*/;
+      var latitude = /*[[${venue.latitude}]]*/;
+      var name_event = /*[[${name}]]*/;
+      var popup = new mapboxgl.Popup({ offset:35 }).setText(name_event);
+
+      new mapboxgl.Marker().setLngLat([longitude, latitude]).setPopup(popup).addTo(map);
+      map.addControl(new mapboxgl.NavigationControl());
+
+      </script>
+    <div sec:authorize="isAuthenticated()">
+      <h4>Tweet about this event</h4>
+      <form th:action="@{/events/{num}(num=${id})}" method="post" th:objects="${tweet}">
+        <div class="form-group">
+          <input class="form-control" type="text" th:value="${{name}}" id="tweet" name="tweet" maxlength="279">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-bookmark" aria-hidden="true"></i> Send Tweet</button>
+        </div>
+      </form>
+    </div>
+
+      <div style="width:290px;">
+        <div style="float: left; width: 90px">
+          <a class="btn btn-primary" role="button" href="/events"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back</a>
+        </div>
+        <div style="float: left; width: 100px">
+            <form sec:authorize="isAuthenticated()" th:action="@{/events/delete/{id}(id=${id})}" th:method="delete">
+                <button type="submit" class="btn btn-danger"><i class="fas fa-trash" aria-hidden="true"></i> Delete</button>
+            </form>
+        </div>
+        <div sec:authorize="isAuthenticated()" style="float: right; width: 100px">
+            <form th:action="@{/events/update/{id}(id=${id})}">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-primary" aria-hidden="true"></i> Update</button>
+            </form>
+      </div>
+    </div>
+  </div>
+
+  </div>
+</body>
+</html>

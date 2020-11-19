@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Update Event</title>
+</head>
+<body>
+  <div layout:fragment="content">
+
+
+  <form th:action="@{/events/update/{id}(id=${id})}" method="post" th:objects="${events}">
+
+    <div class="form-group">
+      <label for="newName">Name</label>
+      <input class="form-control" type="text" th:value="${{updateThisEvent.name}}" id="newName" name="name" maxlength="255" required>
+    </div>
+
+    <div class="form-group">
+      <label for="newDate">Date</label>
+      <input class="form-control" type="date" onchange="limitDate()" th:value="${{updateThisEvent.date}}" id="newDate" name="date" required>
+    </div>
+
+
+    <div class="form-group">
+      <label for="newTime">Time</label>
+      <input class="form-control" type="time" th:value="${{updateThisEvent.time}}" id="newTime" name="time">
+    </div>
+
+    <div class="form-group">
+    	<label for="venue">Venue</label><br>
+    	<select name="venue" th:value="${{updateThisEvent.venue}}" id="venue" class="form-control" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" required>
+    	  <option th:each="venue : ${venues}" th:value="${{venue.id}}" th:text="${venue.name + ' | Capacity: ' + venue.capacity}"></option>
+    	</select>
+    </div>
+
+
+    <div class="form-group">
+      <label for="newDescription">Description</label>
+      <textarea class="form-control" type="text" th:value="${{updateThisEvent.description}}" id="newDescription" name="description" maxlength="499"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary"><i class="fas fa-bookmark" aria-hidden="true"></i> Save</button>
+    <a class="btn btn-warning" role="button" href="/events"><i class="fas fa-ban" aria-hidden="true"></i> Cancel</a>
+  </form>
+
+
+    <script type="text/javascript">
+
+      var today = new Date().toISOString().split('T')[0];
+      document.getElementsByName("date")[0].setAttribute('min', today);
+
+
+      function limitDate() {
+
+        var selectedText = document.getElementById('newDate').value;
+        var selectedDate = new Date(selectedText);
+        var now = new Date();
+        if (selectedDate < now) {
+          document.getElementById('newDate').value = now;
+          alert("No last minute events!");
+        }
+      }
+
+
+    </script>
+  </div>
+</body>
+</html>

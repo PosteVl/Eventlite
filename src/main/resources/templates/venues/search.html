@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title>Search for Venues</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1>Search for Venues</h1>
+
+    <form th:action="@{/venues/search}" method="get">
+        <div class="form-group">
+            <input class="form-control" type="text" name="query" id="query" th:placeholder="${searched}" autofocus="autofocus"/>
+        </div>
+        <a><button class="btn btn-primary" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Search</button></a>
+    </form>
+
+	<hr>
+    <h3 align="center" th:if="${venues.size()>0}">Matching Venues</h3>
+    <h3 align="center" th:if="${venues.size()<=0}">No Matching Venues Found</h3>
+
+    <table class="table table-striped table-hover" th:if="${venues.size()>0}">
+        <thead>
+        <tr>
+            <th><i class="fa fa-map-marker"></i> Venue</th>
+            <th><i class="fa fa-address-card"></i> Address</th>
+            <th><i class="fa fa-flag"></i> Postcode</th>
+            <th><i class="fa fa-child"></i> Capacity</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr th:each="v:${venues}">
+            <td>
+                <a th:href="@{/venues/{num}(num=${v.id})}" th:text="${v.name}">My Venue</a>
+            </td>
+            <td th:text="${v.address}">Venue Address</td>
+            <td th:text="${v.postcode}">Venue Postcode</td>
+            <td th:text="${v.capacity}">Venue Capacity</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>
